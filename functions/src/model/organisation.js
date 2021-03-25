@@ -12,7 +12,7 @@ class OrganisationModel {
         organisationId = uuidv4();
         isDocumentIdExist = await db.collection(organisation).doc(organisationId).get();
       }
-      await db.collection(organisation).doc(organisationId).set({ organisationName, organisationEmail, organisationPhone });
+      await db.collection(organisation).doc(organisationId).set({ organisationName, organisationEmail: organisationEmail.toLowerCase(), organisationPhone });
       return { state: true, organisationId };
     } catch (error) {
       return { state: false, errorMessage: error };

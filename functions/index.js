@@ -16,10 +16,12 @@ app.use(express.json())
 const user = require("./src/service/user");
 const organisation = require("./src/service/organisation");
 const check = require("./src/service/check");
+const post = require("./src/service/post");
 // routes
 
 app.use("/user", user);
 app.use("/organisation", organisation);
 app.use("/check", check);
+app.use("/post", post);
 
 exports.app = functions.https.onRequest(app);

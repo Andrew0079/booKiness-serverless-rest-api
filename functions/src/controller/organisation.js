@@ -14,7 +14,7 @@ class OrganisationController extends OrganisationModel {
         } else {
           return {
             state: false,
-            errorMessage: "The property of request body is missing.",
+            errorMessage: "Request body is missing.",
           };
         }
       } else {
