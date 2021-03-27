@@ -80,6 +80,9 @@ class UserController extends UserModel {
       } else if (request?.body?.phoneNumber && request?.params?.userId) {
         userDetailContainer.phoneNumber = request.body.phoneNumber;
         return this.updateUserDetails(userDetailContainer, request.params.userId);
+      } else if (request?.body?.photoURL && request?.params?.userId) {
+        userDetailContainer.photoURL = request.body.photoURL;
+        return this.updateUserDetails(userDetailContainer, request.params.userId);
       } else {
         return { state: false, errorMessage: "Request body is missing." };
       }

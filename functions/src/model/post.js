@@ -3,7 +3,7 @@ const collectionConstant = require("../config/collectionConstant");
 const { v4: uuidv4 } = require("uuid");
 
 class PostModel {
-  async createPost(userId, content, graphData, organisationId) {
+  async createPost(userId, content, graphData, organisationId, userPhotoUrl, username) {
     try {
       const { post } = collectionConstant;
       let postId = uuidv4();
@@ -17,6 +17,8 @@ class PostModel {
         content,
         graphData,
         organisationId,
+        userPhotoUrl,
+        username,
         time: Date.now()
       });
       return { state: true };

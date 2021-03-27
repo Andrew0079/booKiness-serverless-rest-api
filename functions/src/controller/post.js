@@ -7,13 +7,17 @@ class PostController extends PostModel {
         (request?.body?.graphData,
         request?.body?.content,
         request?.params?.userId,
-        request?.params?.organisationId)
+        request?.params?.organisationId,
+        request?.body?.userPhotoUrl,
+        request?.body?.username)
       ) {
         return this.createPost(
           request.params.userId,
           request.body.content,
           request.body.graphData,
-          request.params.organisationId
+          request.params.organisationId,
+          request.body.userPhotoUrl,
+          request.body.username
         );
       } else {
         return { state: false, errorMessage: "Request field is missing." };

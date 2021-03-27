@@ -1,5 +1,6 @@
 const db = require("../config/db");
 const collectionConstant = require("../config/collectionConstant");
+const { user, post } = collectionConstant;
 
 class UserModel {
   async createUser(
@@ -10,7 +11,6 @@ class UserModel {
     currentUserId
   ) {
     try {
-      const { user } = collectionConstant;
       await db.collection(user).doc(currentUserId).set({
         email: email.toLowerCase(),
         username: username,
@@ -25,7 +25,6 @@ class UserModel {
 
   async findUser(userId) {
     try {
-      const { user } = collectionConstant;
       const snapshot = await db.collection(user).doc(userId).get();
       return { state: true, user: snapshot.data() };
     } catch (error) {
@@ -35,7 +34,6 @@ class UserModel {
 
   async findUsersInOrganisation(organisationId) {
     try {
-      const { user } = collectionConstant;
       const snapshotUsersInOrganisation = await db
         .collection(user)
         .where("organisationId", "==", organisationId)
@@ -54,7 +52,6 @@ class UserModel {
 
   async findUsersInOrganisationByAccountType(organisationId, accountType) {
     try {
-      const { user } = collectionConstant;
       const snapshotUsersInOrganisationByAccountType = await db
         .collection(user)
         .where("organisationId", "==", organisationId)
@@ -79,9 +76,18 @@ class UserModel {
 
   async updateUserDetails(userDetailContainer, userId) {
     try {
-      const { user } = collectionConstant;
-      await db.collection(user).doc(userId).set(userDetailContainer, { merge: true } );
-      return { state: true };
+      if(userDetailContainer?.photoURL) {
+        const userPhotoUrl = { userPhotoUrl: userDetailContainer.photoURL }
+        const batch = db.batch()
+        await db.collection(user).doc(userId).set(userDetailContainer, { merge: true } );
+        const usersPost = await db.collection(post).where("userId", "==", userId).get();
+        usersPost.docs.forEach((doc) => batch.update(doc.ref, userPhotoUrl));
+        await batch.commit();
+        return { state: true };
+      } else {
+        await db.collection(user).doc(userId).set(userDetailContainer, { merge: true } );
+        return { state: true };
+      }
     } catch (error) {
       return { state: false, errorMessage: "Operation Failed!" };
     }
