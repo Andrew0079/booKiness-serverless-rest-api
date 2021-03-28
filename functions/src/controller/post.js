@@ -26,6 +26,18 @@ class PostController extends PostModel {
       return { state: false, errorMessage: error };
     }
   }
+
+  async createLike(request) {
+    try {
+      if (request?.params?.postId && request?.params?.userId && request?.body?.like) {
+        return this.addLike(request.params.postId, request.params.userId, request.body.like);
+      } else {
+        return { state: false, errorMessage: "Request field is missing." };
+      }
+    } catch (error) {
+      return { state: false, errorMessage: error };
+    }
+  }
 }
 
 module.exports = PostController;
