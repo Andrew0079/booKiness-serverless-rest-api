@@ -40,7 +40,6 @@ class UserModel {
         .get();
       const usersInOrganisation = snapshotUsersInOrganisation.docs.map(
         (doc) => {
-          console.log(doc.id);
           return doc.data();
         }
       );
