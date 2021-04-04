@@ -1,22 +1,11 @@
 const OrganisationModel = require("../model/organisation");
 
 class OrganisationController extends OrganisationModel {
+
   async create(request) {
     try {
-      const body = request?.body;
-      if (body) {
-        if (
-          body?.organisationName &&
-          body?.organisationEmail &&
-          body?.organisationPhone
-        ) {
-          return this.createOrganisation(body);
-        } else {
-          return {
-            state: false,
-            errorMessage: "Request body is missing.",
-          };
-        }
+      if(request?.body?.organisationName && request?.body?.organisationEmail && request?.body?.organisationPhone) {
+        return this.createOrganisation(request.body.organisationName, request.body.organisationEmail, request.body.organisationPhone);
       } else {
         return { state: false, errorMessage: "Request body is missing." };
       }

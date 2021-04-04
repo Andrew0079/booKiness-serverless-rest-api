@@ -19,7 +19,6 @@ const organisation = require("./src/service/organisation");
 const check = require("./src/service/check");
 const post = require("./src/service/post");
 const work = require("./src/service/work");
-const comment = require("./src/service/comment");
 // routes
 
 app.use("/user", user);
@@ -27,6 +26,5 @@ app.use("/organisation", organisation);
 app.use("/check", check);
 app.use("/post", post);
 app.use("/work", work);
-app.use("/comment", comment);
 
 exports.app = functions.https.onRequest(app);

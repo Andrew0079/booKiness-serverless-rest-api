@@ -3,20 +3,9 @@ const collectionConstant = require("../config/collectionConstant");
 const { user, post } = collectionConstant;
 
 class UserModel {
-  async createUser(
-    username,
-    email,
-    accountType,
-    organisationId,
-    currentUserId
-  ) {
+  async createUser(username, email, accountType, organisationId, currentUserId) {
     try {
-      await db.collection(user).doc(currentUserId).set({
-        email: email.toLowerCase(),
-        username: username,
-        accountType: accountType,
-        organisationId,
-      });
+      await db.collection(user).doc(currentUserId).set({ email: email.toLowerCase(), username: username, accountType: accountType, organisationId });
       return { state: true };
     } catch (error) {
       return { state: false, errorMessage: "Operation Failed!" };
@@ -34,15 +23,8 @@ class UserModel {
 
   async findUsersInOrganisation(organisationId) {
     try {
-      const snapshotUsersInOrganisation = await db
-        .collection(user)
-        .where("organisationId", "==", organisationId)
-        .get();
-      const usersInOrganisation = snapshotUsersInOrganisation.docs.map(
-        (doc) => {
-          return doc.data();
-        }
-      );
+      const snapshotUsersInOrganisation = await db.collection(user).where("organisationId", "==", organisationId).get();
+      const usersInOrganisation = snapshotUsersInOrganisation.docs.map((doc) => { return doc.data() });
       return { state: true, usersInOrganisation };
     } catch (error) {
       return { state: false, errorMessage: "Operation Failed!" };
@@ -51,22 +33,9 @@ class UserModel {
 
   async findUsersInOrganisationByAccountType(organisationId, accountType) {
     try {
-      const snapshotUsersInOrganisationByAccountType = await db
-        .collection(user)
-        .where("organisationId", "==", organisationId)
-        .where("accountType", "==", accountType)
-        .get();
+      const snapshotUsersInOrganisationByAccountType = await db.collection(user).where("organisationId", "==", organisationId).where("accountType", "==", accountType).get();
       const usersInOrganisationByAccountType = snapshotUsersInOrganisationByAccountType.docs.map(
-        (doc) => {
-          return {
-            userId: doc.id,
-            username: doc.data().username,
-            email: doc.data().email,
-            accountType: doc.data().accountType,
-            organisationId: doc.data().organisationId,
-          };
-        }
-      );
+        (doc) => { return { userId: doc.id, username: doc.data().username, email: doc.data().email, accountType: doc.data().accountType, organisationId: doc.data().organisationId }});
       return { state: true, usersInOrganisationByAccountType };
     } catch (error) {
       return { state: false, errorMessage: "Operation Failed!" };

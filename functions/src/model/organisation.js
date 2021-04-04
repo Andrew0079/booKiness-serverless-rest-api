@@ -3,7 +3,7 @@ const collectionConstant = require("../config/collectionConstant");
 const { v4: uuidv4 } = require("uuid");
 
 class OrganisationModel {
-  async createOrganisation({ organisationName,organisationEmail,organisationPhone }) {
+  async createOrganisation(organisationName, organisationEmail,organisationPhone) {
     try {
       const { organisation } = collectionConstant;
       let organisationId = uuidv4();

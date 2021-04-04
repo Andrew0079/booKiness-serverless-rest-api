@@ -15,5 +15,22 @@ router.post("/create-like/:postId/:userId", async (req, res) => {
   return res.status(200).send(createdLike);
 });
 
+router.post("/create-comment/:postId/:userId", async (req, res) => {
+  const postController = new PostController();
+  const createdComment = await postController.createComment(req)
+  return res.status(200).send(createdComment);
+});
+
+router.post("/delete-comment/:postId/:userId", async (req, res) => {
+  const postController = new PostController();
+  const deletedComment = await postController.deleteComment(req)
+  return res.status(200).send(deletedComment);
+});
+
+router.post("/delete/user/post/:postId", async (req, res) => {
+  const postController = new PostController();
+  const deletedPost= await postController.delete(req)
+  return res.status(200).send(deletedPost);
+});
 
 module.exports = router;

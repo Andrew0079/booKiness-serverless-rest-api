@@ -34,6 +34,15 @@ class PostModel {
     }
   }
 
+  async deletePost(postId) {
+    try {
+      await db.collection(post).doc(postId).delete();
+      return { state: true };
+    } catch (error) {
+      return { state: false, errorMessage: "Operation Failed!" };
+    }
+  }
+
   async addLike(postId, userId, like) {
     try {
       const likesContainer = {};
@@ -54,6 +63,49 @@ class PostModel {
         }
         await db.collection(post).doc(postId).set({ postLikes: likesContainer }, { merge: true })
         return { state: true };
+      } else {
+        return { state: false, errorMessage: "Operation Failed!" };
+      }
+    } catch (error) {
+      return { state: false, errorMessage: "Operation Failed!" };
+    }
+  }
+
+  async addComment(commentData, postId) {
+    try {
+      const commentContainer = []
+      const currentPost = await db.collection(post).doc(postId).get();
+      if (currentPost.exists) {
+        if(currentPost.data()?.postComments) {
+          const postCommentsContainer = currentPost.data().postComments
+          postCommentsContainer.push(commentData)
+          await db.collection(post).doc(postId).set({ postComments: postCommentsContainer }, { merge: true })
+          return { state: true };
+        } else {
+          commentContainer.push(commentData)
+          await db.collection(post).doc(postId).set({ postComments: commentContainer }, { merge: true })
+          return { state: true };
+        }
+      } else { 
+        return { state: false, errorMessage: "Operation Failed!" };
+      }
+    } catch (error) {
+      return { state: false, errorMessage: "Operation Failed!" };
+    }
+  }
+
+  async removeComment(postId, userId, commentText) {
+    try {
+      const currentPost = await db.collection(post).doc(postId).get();
+      if (currentPost.exists) {
+        if(currentPost.data()?.postComments) {
+          const postCommentsContainer = currentPost.data().postComments
+          const filteredComments = postCommentsContainer.filter((data) => data.userId === userId && data.commentText !== commentText)
+          await db.collection(post).doc(postId).set({ postComments: filteredComments }, { merge: true })
+          return { state: true };
+        }
+      } else { 
+        return { state: false, errorMessage: "Operation Failed!" };
       }
     } catch (error) {
       return { state: false, errorMessage: "Operation Failed!" };

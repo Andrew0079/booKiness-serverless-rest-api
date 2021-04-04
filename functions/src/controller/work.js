@@ -27,6 +27,21 @@ class WorkController extends WorkModel {
       return { state: false, errorMessage: error };
     }
   }
+
+  async delete(request) {
+    try {
+      if (request?.params?.workId){
+        return this.deleteWork(request.params.workId);
+      } else {
+        return {
+          state: false,
+          errorMessage: "Request body is missing.",
+        };
+      }
+    } catch (error) {
+      return { state: false, errorMessage: error };
+    }
+  }
 }
 
 module.exports = WorkController;
