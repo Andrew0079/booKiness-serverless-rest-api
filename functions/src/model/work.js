@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const { work } = collectionConstant;
 
 class WorkModel {
-  async createWork(date, employeeId, time, event, employerId) {
+  async createWork(date, employeeId, startTime, finishTime, event, employerId, username, photoURL ) {
     try {
       let workId = uuidv4();
       let isDocumentIdExist = await db.collection(work).doc(workId).get();
@@ -12,7 +12,7 @@ class WorkModel {
         workId = uuidv4();
         isDocumentIdExist = await db.collection(work).doc(workId).get();
       }
-      await db.collection(work).doc(workId).set({ date, employeeId, time, event, employerId });
+      await db.collection(work).doc(workId).set({ date, employeeId, startTime, finishTime, event, employerId, username, photoURL });
       return { state: true };
     } catch (error) {
       return { state: false, errorMessage: error };

@@ -3,20 +3,8 @@ const WorkModel = require("../model/work");
 class WorkController extends WorkModel {
   async create(request) {
     try {
-      if (
-        (request?.body?.date &&
-          request?.body?.employeeId &&
-          request?.body?.time &&
-          request?.body?.event,
-        request?.body?.employerId)
-      ) {
-        return this.createWork(
-          request.body.date,
-          request.body.employeeId,
-          request.body.time,
-          request.body.event,
-          request.body.employerId
-        );
+      if (request?.body?.date && request?.body?.employeeId && request?.body?.startTime && request?.body?.finishTime && request?.body?.event, request?.body?.employerId && request?.body?.username && request?.body?.photoURL) {
+        return this.createWork(request.body.date, request.body.employeeId, request.body.startTime, request.body.finishTime, request.body.event, request.body.employerId, request.body.username, request.body.photoURL );
       } else {
         return {
           state: false,

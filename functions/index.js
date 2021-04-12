@@ -12,7 +12,6 @@ app.use(cors({ origin: true }));
 app.use(cookieParser);
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
-app.use(authMiddleware)
 
 const user = require("./src/service/user");
 const organisation = require("./src/service/organisation");
@@ -24,7 +23,7 @@ const work = require("./src/service/work");
 app.use("/user", user);
 app.use("/organisation", organisation);
 app.use("/check", check);
-app.use("/post", post);
-app.use("/work", work);
+app.use("/post", authMiddleware, post);
+app.use("/work", authMiddleware, work);
 
 exports.app = functions.https.onRequest(app);
