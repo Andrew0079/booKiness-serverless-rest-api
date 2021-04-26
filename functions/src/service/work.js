@@ -8,10 +8,17 @@ router.post("/", async (req, res) => {
   return res.status(200).send(newWork);
 });
 
-router.post("/delete/:workId", async (req, res) => {
+router.delete("/delete/:workId", async (req, res) => {
   const workController = new WorkController();
   const deletedWork = await workController.delete(req)
   return res.status(200).send(deletedWork);
+});
+
+
+router.post("/update/:eventId", async (req, res) => {
+  const workController = new WorkController();
+  const updatedWork = await workController.update(req)
+  return res.status(200).send(updatedWork);
 });
 
 module.exports = router;

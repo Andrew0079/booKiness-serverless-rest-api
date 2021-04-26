@@ -19,6 +19,15 @@ class WorkModel {
     }
   }
 
+  async updateWork(date, employeeId, startTime, finishTime, event, employerId, username, photoURL, eventId ) {
+    try {
+      await db.collection(work).doc(eventId).set({ date, employeeId, startTime, finishTime, event, employerId, username, photoURL }, { merge: true });
+      return { state: true };
+    } catch (error) {
+      return { state: false, errorMessage: error };
+    }
+  }
+
   async deleteWork(workId) {
     try {
       await db.collection(work).doc(workId).delete()
