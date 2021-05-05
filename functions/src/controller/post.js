@@ -4,10 +4,10 @@ class PostController extends PostModel {
 
   async create(request) {
     try {
-      if (request?.body?.graphData, request?.body?.content, request?.params?.userId, request?.params?.organisationId, request?.body?.userPhotoUrl, request?.body?.username) {
-        return this.createPost(request.params.userId, request.body.content, request.body.graphData, request.params.organisationId, request.body.userPhotoUrl, request.body.username);
+      if (request?.params?.userId && request?.params?.organisationId && request?.body) {
+        return this.createPost({...request.body, ...request.params});
       } else {
-        return { state: false, errorMessage: "Request field is missing." };
+        return { state: false, errorMessage: "Operation Failed!" };
       }
     } catch (error) {
       return { state: false, errorMessage: error };
@@ -19,7 +19,7 @@ class PostController extends PostModel {
       if (request?.params?.postId) {
         return this.deletePost(request.params.postId);
       } else {
-        return { state: false, errorMessage: "Request field is missing." };
+        return { state: false, errorMessage: "Operation Failed!" };
       }
     } catch (error) {
       return { state: false, errorMessage: error };
@@ -31,7 +31,7 @@ class PostController extends PostModel {
       if (request?.params?.postId && request?.params?.userId && request?.body?.like) {
         return this.addLike(request.params.postId, request.params.userId, request.body.like);
       } else {
-        return { state: false, errorMessage: "Request field is missing." };
+        return { state: false, errorMessage: "Operation Failed!" };
       }
     } catch (error) {
       return { state: false, errorMessage: error };
@@ -40,9 +40,8 @@ class PostController extends PostModel {
 
   async createComment(request) {
     try {
-      if (request?.params?.postId && request?.params?.userId && request?.body?.commentText && request?.body?.username && request?.body?.userPhotoUrl) {
-        const commentData = { userId: request.params.userId, commentText: request.body.commentText, username: request.body.username, photoUrl: request.body.userPhotoUrl, time: Date.now() }
-        return this.addComment(commentData, request.params.postId);
+      if (request?.params?.postId && request?.params?.userId && request?.body?.commentText && request?.body?.username && request?.body?.photoURL) {
+        return this.addComment({ ...request.params, ...request.body, time: Date.now() }, request.params.postId);
       } else {
         return { state: false, errorMessage: "Operation Failed!" };
       }
@@ -53,8 +52,8 @@ class PostController extends PostModel {
 
   async deleteComment(request) {
     try {
-      if (request?.params?.postId && request?.params?.userId && request?.body?.commentText) {
-        return this.removeComment(request.params.postId, request.params.userId, request.body.commentText);
+      if (request?.params?.postId && request?.params?.commentId) {
+        return this.removeComment({...request.params});
       } else {
         return { state: false, errorMessage: "Operation Failed!" };
       }

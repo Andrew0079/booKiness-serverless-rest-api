@@ -4,11 +4,11 @@ class WorkController extends WorkModel {
   async create(request) {
     try {
       if (request?.body?.date && request?.body?.employeeId && request?.body?.startTime && request?.body?.finishTime && request?.body?.event && request?.body?.employerId && request?.body?.username && request?.body?.photoURL) {
-        return this.createWork(request.body.date, request.body.employeeId, request.body.startTime, request.body.finishTime, request.body.event, request.body.employerId, request.body.username, request.body.photoURL );
+        return this.createWork({...request.body, ...request.params});
       } else {
         return {
           state: false,
-          errorMessage: "Request body is missing.",
+          errorMessage: "Operation Failed!",
         };
       }
     } catch (error) {
@@ -19,11 +19,11 @@ class WorkController extends WorkModel {
   async update(request) {
     try {
       if (request?.body?.date && request?.body?.employeeId && request?.body?.startTime && request?.body?.finishTime && request?.body?.event && request?.body?.employerId && request?.body?.username && request?.body?.photoURL && request?.params?.eventId) {
-        return this.updateWork(request.body.date, request.body.employeeId, request.body.startTime, request.body.finishTime, request.body.event, request.body.employerId, request.body.username, request.body.photoURL, request.params.eventId );
+        return this.updateWork({...request.body, ...request.params});
       } else {
         return {
           state: false,
-          errorMessage: "Request body is missing.",
+          errorMessage: "Operation Failed!",
         };
       }
     } catch (error) {
@@ -38,7 +38,7 @@ class WorkController extends WorkModel {
       } else {
         return {
           state: false,
-          errorMessage: "Request body is missing.",
+          errorMessage: "Operation Failed!",
         };
       }
     } catch (error) {

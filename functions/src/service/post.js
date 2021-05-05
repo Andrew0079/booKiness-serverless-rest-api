@@ -21,7 +21,7 @@ router.post("/create-comment/:postId/:userId", async (req, res) => {
   return res.status(200).send(createdComment);
 });
 
-router.post("/delete-comment/:postId/:userId", async (req, res) => {
+router.post("/delete-comment/:postId/:commentId", async (req, res) => {
   const postController = new PostController();
   const deletedComment = await postController.deleteComment(req)
   return res.status(200).send(deletedComment);

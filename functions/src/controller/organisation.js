@@ -7,7 +7,7 @@ class OrganisationController extends OrganisationModel {
       if(request?.body?.organisationName && request?.body?.organisationEmail && request?.body?.organisationPhone) {
         return this.createOrganisation(request.body.organisationName, request.body.organisationEmail, request.body.organisationPhone);
       } else {
-        return { state: false, errorMessage: "Request body is missing." };
+        return { state: false, errorMessage: "Operation Failed!" };
       }
     } catch (error) {
       return { state: false, errorMessage: error };
@@ -30,7 +30,7 @@ class OrganisationController extends OrganisationModel {
         organisationDetailContainer.organisationPhotoURL = request.body.organisationPhotoURL;
         return this.updateOrganisation(organisationDetailContainer, request.params.organisationId);
       } else {
-        return { state: false, errorMessage: "Request body is missing." };
+        return { state: false, errorMessage: "Operation Failed!" };
       }
     } catch (error) {
       return { state: false, errorMessage: error };

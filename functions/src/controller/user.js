@@ -70,19 +70,20 @@ class UserController extends UserModel {
 
   async update(request) {
     try {
+      const userId = request?.params?.userId
       let userDetailContainer = {}
-      if (request?.body?.username && request?.params?.userId) {
+      if (request?.body?.username && userId) {
         userDetailContainer.username = request.body.username;
-        return this.updateUserDetails(userDetailContainer, request.params.userId);
-      } else if (request?.body?.name && request?.params?.userId) {
+        return this.updateUserDetails(userDetailContainer, userId);
+      } else if (request?.body?.name && userId) {
         userDetailContainer.name = request.body.name;
-        return this.updateUserDetails(userDetailContainer, request.params.userId);
-      } else if (request?.body?.phoneNumber && request?.params?.userId) {
+        return this.updateUserDetails(userDetailContainer, userId);
+      } else if (request?.body?.phoneNumber && userId) {
         userDetailContainer.phoneNumber = request.body.phoneNumber;
-        return this.updateUserDetails(userDetailContainer, request.params.userId);
-      } else if (request?.body?.photoURL && request?.params?.userId) {
+        return this.updateUserDetails(userDetailContainer, userId);
+      } else if (request?.body?.photoURL && userId) {
         userDetailContainer.photoURL = request.body.photoURL;
-        return this.updateUserDetails(userDetailContainer, request.params.userId);
+        return this.updateUserDetails(userDetailContainer, userId);
       } else {
         return { state: false, errorMessage: "Request body is missing." };
       }

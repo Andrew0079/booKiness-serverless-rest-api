@@ -4,14 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const { post } = collectionConstant;
 
 class PostModel {
-  async createPost(
-    userId,
-    content,
-    graphData,
-    organisationId,
-    userPhotoUrl,
-    username
-  ) {
+  async createPost(postDataContainer) {
     try {
       let postId = uuidv4();
       let isDocumentIdExist = await db.collection(post).doc(postId).get();
@@ -19,15 +12,7 @@ class PostModel {
         postId = uuidv4();
         isDocumentIdExist = await db.collection(post).doc(postId).get();
       }
-      await db.collection(post).doc(postId).set({
-        userId,
-        content,
-        graphData,
-        organisationId,
-        userPhotoUrl,
-        username,
-        time: Date.now(),
-      });
+      await db.collection(post).doc(postId).set({ ...postDataContainer, time: Date.now()});
       return { state: true };
     } catch (error) {
       return { state: false, errorMessage: "Operation Failed!" };
@@ -78,11 +63,18 @@ class PostModel {
       if (currentPost.exists) {
         if(currentPost.data()?.postComments) {
           const postCommentsContainer = currentPost.data().postComments
-          postCommentsContainer.push(commentData)
+          let commentId = uuidv4();
+          let isIdExist = postCommentsContainer.some((comment) => comment?.commentId === commentId)
+          while (isIdExist) {
+            commentId = uuidv4();
+            isIdExist = postCommentsContainer.some((comment) => comment?.commentId === commentId)
+          }
+          postCommentsContainer.push({...commentData, commentId})
           await db.collection(post).doc(postId).set({ postComments: postCommentsContainer }, { merge: true })
           return { state: true };
         } else {
-          commentContainer.push(commentData)
+          let commentId = uuidv4();
+          commentContainer.push({...commentData, commentId})
           await db.collection(post).doc(postId).set({ postComments: commentContainer }, { merge: true })
           return { state: true };
         }
@@ -94,13 +86,13 @@ class PostModel {
     }
   }
 
-  async removeComment(postId, userId, commentText) {
+  async removeComment({postId, commentId}) {
     try {
       const currentPost = await db.collection(post).doc(postId).get();
       if (currentPost.exists) {
         if(currentPost.data()?.postComments) {
           const postCommentsContainer = currentPost.data().postComments
-          const filteredComments = postCommentsContainer.filter((data) => data.userId === userId && data.commentText !== commentText)
+          const filteredComments = postCommentsContainer.filter((data) => data.commentId !== commentId)
           await db.collection(post).doc(postId).set({ postComments: filteredComments }, { merge: true })
           return { state: true };
         }

@@ -1,6 +1,6 @@
 const db = require("../config/db");
 const collectionConstant = require("../config/collectionConstant");
-const { user, post } = collectionConstant;
+const { user, post, work } = collectionConstant;
 
 class UserModel {
   async createUser(username, email, accountType, organisationId, currentUserId) {
@@ -45,12 +45,28 @@ class UserModel {
   async updateUserDetails(userDetailContainer, userId) {
     try {
       if(userDetailContainer?.photoURL) {
-        const userPhotoUrl = { userPhotoUrl: userDetailContainer.photoURL }
-        const batch = db.batch()
-        await db.collection(user).doc(userId).set(userDetailContainer, { merge: true } );
-        const usersPost = await db.collection(post).where("userId", "==", userId).get();
-        usersPost.docs.forEach((doc) => batch.update(doc.ref, userPhotoUrl));
-        await batch.commit();
+          const batch = db.batch()
+          // //updating post data that contains the user' image
+          // const usersPost = await db.collection(post).where("userId", "==", userId).get();
+          // usersPost.docs.forEach((doc) => batch.update(doc.ref, userDetailContainer));
+
+          //updating post data that contains the user' image
+          const usersPost = await db.collection(post).get();
+          // usersPost.docs.forEach((doc) => {
+          //   doc.data().postComments.map((data) => {
+          //    if(data.userId === userId) {
+          //      data.photoURL = userDetailContainer.photoURL
+          //    } 
+          //   })
+          // })
+          usersPost.docs.forEach((doc) => batch.update(doc.ref, userDetailContainer));
+
+          //updating work data that contains the user' image
+          const works = await db.collection(work).where("employerId", "==", userId).get();
+          works.docs.forEach((doc) => batch.update(doc.ref, userDetailContainer));
+
+          await db.collection(user).doc(userId).set(userDetailContainer, { merge: true } );
+          await batch.commit();
         return { state: true };
       } else {
         await db.collection(user).doc(userId).set(userDetailContainer, { merge: true } );

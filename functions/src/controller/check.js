@@ -10,7 +10,7 @@ class CheckController extends CheckModel {
       } else if (request?.body?.organisationId) {
         return this.isOrganisationIdExist(request?.body?.organisationId)
       } else {
-        return { state: false, errorMessage: "Request body (email) is missing." };
+        return { state: false, errorMessage: "Operation Failed!" };
       }
     } catch (error) {
       return { state: false, errorMessage: error };
