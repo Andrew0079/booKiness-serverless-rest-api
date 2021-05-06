@@ -1,6 +1,6 @@
 const db = require("../config/db");
 const collectionConstant = require("../config/collectionConstant");
-const { user, post, work } = collectionConstant;
+const { user, post, work, comment } = collectionConstant;
 
 class UserModel {
   async createUser(username, email, accountType, organisationId, currentUserId) {
@@ -44,22 +44,15 @@ class UserModel {
 
   async updateUserDetails(userDetailContainer, userId) {
     try {
-      if(userDetailContainer?.photoURL) {
+      if(userDetailContainer?.photoURL || userDetailContainer?.username) {
           const batch = db.batch()
-          // //updating post data that contains the user' image
-          // const usersPost = await db.collection(post).where("userId", "==", userId).get();
-          // usersPost.docs.forEach((doc) => batch.update(doc.ref, userDetailContainer));
-
           //updating post data that contains the user' image
-          const usersPost = await db.collection(post).get();
-          // usersPost.docs.forEach((doc) => {
-          //   doc.data().postComments.map((data) => {
-          //    if(data.userId === userId) {
-          //      data.photoURL = userDetailContainer.photoURL
-          //    } 
-          //   })
-          // })
+          const usersPost = await db.collection(post).where("userId", "==", userId).get();
           usersPost.docs.forEach((doc) => batch.update(doc.ref, userDetailContainer));
+         
+          //updating sub collection of post -> comment
+          const userPostComment = await db.collectionGroup(comment).where("userId", "==", userId).get()
+          userPostComment.docs.forEach((doc) => batch.update(doc.ref, { ...userDetailContainer }));
 
           //updating work data that contains the user' image
           const works = await db.collection(work).where("employerId", "==", userId).get();

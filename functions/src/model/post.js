@@ -1,7 +1,7 @@
 const db = require("../config/db");
 const collectionConstant = require("../config/collectionConstant");
 const { v4: uuidv4 } = require("uuid");
-const { post } = collectionConstant;
+const { post, comment } = collectionConstant;
 
 class PostModel {
   async createPost(postDataContainer) {
@@ -56,49 +56,20 @@ class PostModel {
     }
   }
 
-  async addComment(commentData, postId) {
+  async addComment(commentData) {
     try {
-      const commentContainer = []
-      const currentPost = await db.collection(post).doc(postId).get();
-      if (currentPost.exists) {
-        if(currentPost.data()?.postComments) {
-          const postCommentsContainer = currentPost.data().postComments
-          let commentId = uuidv4();
-          let isIdExist = postCommentsContainer.some((comment) => comment?.commentId === commentId)
-          while (isIdExist) {
-            commentId = uuidv4();
-            isIdExist = postCommentsContainer.some((comment) => comment?.commentId === commentId)
-          }
-          postCommentsContainer.push({...commentData, commentId})
-          await db.collection(post).doc(postId).set({ postComments: postCommentsContainer }, { merge: true })
-          return { state: true };
-        } else {
-          let commentId = uuidv4();
-          commentContainer.push({...commentData, commentId})
-          await db.collection(post).doc(postId).set({ postComments: commentContainer }, { merge: true })
-          return { state: true };
-        }
-      } else { 
-        return { state: false, errorMessage: "Operation Failed!" };
-      }
+      await db.collection(post).doc(commentData.postId).collection(comment).add({ ...commentData, time: Date.now() })
+      return { state: true }
     } catch (error) {
       return { state: false, errorMessage: "Operation Failed!" };
     }
   }
 
-  async removeComment({postId, commentId}) {
+  async removeComment({ postId, commentId }) {
     try {
-      const currentPost = await db.collection(post).doc(postId).get();
-      if (currentPost.exists) {
-        if(currentPost.data()?.postComments) {
-          const postCommentsContainer = currentPost.data().postComments
-          const filteredComments = postCommentsContainer.filter((data) => data.commentId !== commentId)
-          await db.collection(post).doc(postId).set({ postComments: filteredComments }, { merge: true })
-          return { state: true };
-        }
-      } else { 
-        return { state: false, errorMessage: "Operation Failed!" };
-      }
+      const docRef = db.collection(post).doc(postId).collection(comment)
+      docRef.doc(commentId).delete()
+      return { state: true };
     } catch (error) {
       return { state: false, errorMessage: "Operation Failed!" };
     }

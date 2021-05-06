@@ -41,7 +41,7 @@ class PostController extends PostModel {
   async createComment(request) {
     try {
       if (request?.params?.postId && request?.params?.userId && request?.body?.commentText && request?.body?.username && request?.body?.photoURL) {
-        return this.addComment({ ...request.params, ...request.body, time: Date.now() }, request.params.postId);
+        return this.addComment({ ...request.params, ...request.body });
       } else {
         return { state: false, errorMessage: "Operation Failed!" };
       }
